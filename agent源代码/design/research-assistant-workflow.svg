@@ -1,0 +1,123 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1800" height="1320" viewBox="0 0 1800 1320" role="img" aria-labelledby="title desc">
+  <title id="title">科研论证辅助 Agent 核心流程</title>
+  <desc id="desc">自上而下展示本地优先的论文获取分支，以及自左向右的大模型提证据、小模型判断、控制器有界继续或终止的核心流程。</desc>
+  <defs>
+    <linearGradient id="header" x1="0" y1="0" x2="1" y2="0"><stop stop-color="#122b45"/><stop offset="1" stop-color="#24566f"/></linearGradient>
+    <filter id="shadow" x="-15%" y="-20%" width="130%" height="145%"><feDropShadow dx="0" dy="4" stdDeviation="5" flood-color="#16324a" flood-opacity=".10"/></filter>
+    <marker id="arrow" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto"><path d="M0 0L9 5L0 10Z" fill="#60758a"/></marker>
+    <marker id="blueArrow" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto"><path d="M0 0L9 5L0 10Z" fill="#357da2"/></marker>
+    <marker id="greenArrow" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto"><path d="M0 0L9 5L0 10Z" fill="#31836e"/></marker>
+    <style>
+      text{font-family:"Microsoft YaHei","Noto Sans CJK SC",sans-serif;fill:#18334b}
+      .title{font-size:30px;font-weight:700;fill:#fff}.subtitle{font-size:15px;fill:#d8e6ef}
+      .section{font-size:14px;font-weight:700;letter-spacing:1px;fill:#536f86}
+      .node{fill:#fff;stroke:#cbd7e1;stroke-width:1.6;rx:13;filter:url(#shadow)}
+      .primary{fill:#edf5fa;stroke:#8db3c9}.local{fill:#eef7f3;stroke:#8db9a9}.remote{fill:#f1f6fb;stroke:#9eb7ca}.judge{fill:#fff7e9;stroke:#d7b76e}.outcome{fill:#f1f6fa;stroke:#9eb0bf}.warning{fill:#fff3f0;stroke:#d9a096}
+      .head{font-size:17px;font-weight:700}.body{font-size:13px;fill:#526a7e}.note{font-size:12px;fill:#62798c}.edge{fill:none;stroke:#60758a;stroke-width:2.4;stroke-linecap:round;stroke-linejoin:round;marker-end:url(#arrow)}
+      .edgeBlue{fill:none;stroke:#357da2;stroke-width:2.4;stroke-linecap:round;stroke-linejoin:round;marker-end:url(#blueArrow)}
+      .edgeGreen{fill:none;stroke:#31836e;stroke-width:2.4;stroke-linecap:round;stroke-linejoin:round;marker-end:url(#greenArrow)}
+      .loop{fill:none;stroke:#357da2;stroke-width:2.4;stroke-dasharray:7 6;stroke-linecap:round;stroke-linejoin:round;marker-end:url(#blueArrow)}
+      .label{font-size:12px;font-weight:700;fill:#357da2}
+    </style>
+  </defs>
+  <rect width="1800" height="1320" fill="#f5f8fb"/>
+  <rect width="1800" height="100" fill="url(#header)"/>
+  <text x="54" y="46" class="title">科研论证辅助 Agent｜核心框架</text>
+  <text x="56" y="74" class="subtitle">本地优先获取论文 · 大模型提出证据 · 小模型逐条判断 · 有界控制结论</text>
+
+  <text x="60" y="140" class="section">01　问题理解与论文获取</text>
+
+  <!-- Central question-to-local path -->
+  <rect x="720" y="165" width="360" height="78" class="node primary"/>
+  <text x="900" y="195" text-anchor="middle" class="head">输入问题 / 待核验论点</text>
+  <text x="900" y="220" text-anchor="middle" class="body">明确对象、条件与回答范围</text>
+  <path d="M900 243V274" class="edge"/>
+  <rect x="720" y="278" width="360" height="78" class="node primary"/>
+  <text x="900" y="308" text-anchor="middle" class="head">先检索用户本地论文集</text>
+  <text x="900" y="333" text-anchor="middle" class="body">在已授权文件夹中找相关论文</text>
+  <path d="M900 356V386" class="edge"/>
+  <polygon points="900,388 1050,454 900,520 750,454" fill="#fff" stroke="#9eafbd" stroke-width="1.8" filter="url(#shadow)"/>
+  <text x="900" y="450" text-anchor="middle" class="head">本地材料足够？</text>
+  <text x="900" y="474" text-anchor="middle" class="body">相关性与覆盖达到阈值</text>
+
+  <!-- Yes branch -->
+  <path d="M750 454H525V492" class="edgeGreen"/>
+  <text x="650" y="443" class="label">是</text>
+  <rect x="365" y="494" width="320" height="88" class="node local"/>
+  <text x="525" y="527" text-anchor="middle" class="head">采用本地相关论文</text>
+  <text x="525" y="552" text-anchor="middle" class="body">跳过外部检索</text>
+
+  <!-- No branch: simple MCP fallback -->
+  <path d="M1050 454H1270V492" class="edgeBlue"/>
+  <text x="1127" y="443" class="label">否</text>
+  <rect x="1110" y="494" width="320" height="88" class="node remote"/>
+  <text x="1270" y="527" text-anchor="middle" class="head">MCP 检索相关论文</text>
+  <text x="1270" y="552" text-anchor="middle" class="body">按相关性排序，默认取最相关候选</text>
+  <path d="M1270 582V610" class="edgeBlue"/>
+  <polygon points="1270,612 1400,668 1270,724 1140,668" fill="#fff" stroke="#d2b66f" stroke-width="1.8" filter="url(#shadow)"/>
+  <text x="1270" y="664" text-anchor="middle" class="head">可获取合法全文？</text>
+  <text x="1270" y="687" text-anchor="middle" class="body">开放获取或用户有权访问</text>
+  <path d="M1140 668H975V742" class="edgeGreen"/>
+  <text x="1055" y="656" class="label">是</text>
+  <rect x="815" y="744" width="320" height="82" class="node remote"/>
+  <text x="975" y="776" text-anchor="middle" class="head">受控下载并导入</text>
+  <text x="975" y="801" text-anchor="middle" class="body">下载能力由 AGH Host 实现</text>
+  <path d="M1400 668H1530V744" class="edge"/>
+  <text x="1442" y="656" class="label">否</text>
+  <rect x="1370" y="746" width="320" height="80" class="node warning"/>
+  <text x="1530" y="777" text-anchor="middle" class="head">说明无法获取全文</text>
+  <text x="1530" y="802" text-anchor="middle" class="body">可由用户选择其他候选或自行上传</text>
+  <text x="1530" y="846" text-anchor="middle" class="note">不绕过付费墙；MCP 故障也以明确状态结束</text>
+
+  <!-- Merge acquisition paths into one corpus -->
+  <path d="M525 582V660H580V744" class="edgeGreen"/>
+  <path d="M975 826V858H720V878" class="edgeGreen"/>
+  <path d="M580 744V858H720" fill="none" stroke="#31836e" stroke-width="2.4" stroke-linecap="round"/>
+  <rect x="540" y="880" width="360" height="72" class="node local"/>
+  <text x="720" y="910" text-anchor="middle" class="head">统一论文集</text>
+  <text x="720" y="934" text-anchor="middle" class="body">本地论文与成功导入的远程论文同流程处理</text>
+
+  <!-- Evidence pipeline -->
+  <text x="60" y="1000" class="section">02　证据提取、判断与有界决策</text>
+  <path d="M720 952V1018H170V1050" class="edge"/>
+  <rect x="60" y="1052" width="220" height="112" class="node primary"/>
+  <text x="170" y="1084" text-anchor="middle" class="head">检索原文片段</text>
+  <text x="170" y="1110" text-anchor="middle" class="body">保留页码与段落位置</text>
+  <text x="170" y="1136" text-anchor="middle" class="note">受 token / 页数预算约束</text>
+  <path d="M280 1108H325" class="edge"/>
+  <rect x="328" y="1052" width="250" height="112" class="node primary"/>
+  <text x="453" y="1084" text-anchor="middle" class="head">大模型提出证据</text>
+  <text x="453" y="1110" text-anchor="middle" class="body">生成问题—证据—原始回答对</text>
+  <text x="453" y="1136" text-anchor="middle" class="note">证据摘录来自论文原文</text>
+  <path d="M578 1108H623" class="edge"/>
+  <rect x="626" y="1052" width="220" height="112" class="node outcome"/>
+  <text x="736" y="1084" text-anchor="middle" class="head">写入证据池</text>
+  <text x="736" y="1110" text-anchor="middle" class="body">保存摘录、来源与定位</text>
+  <text x="736" y="1136" text-anchor="middle" class="note">独立于对话上下文持久化</text>
+  <path d="M846 1108H891" class="edge"/>
+  <rect x="894" y="1052" width="250" height="112" class="node judge"/>
+  <text x="1019" y="1084" text-anchor="middle" class="head">小模型 / Jev 逐条判断</text>
+  <text x="1019" y="1110" text-anchor="middle" class="body">仅评估该问题—证据—回答对</text>
+  <text x="1019" y="1136" text-anchor="middle" class="note">输出关系标签与置信度</text>
+  <path d="M1144 1108H1190" class="edge"/>
+  <polygon points="1340,1025 1480,1108 1340,1191 1200,1108" fill="#fff" stroke="#9eafbd" stroke-width="1.8" filter="url(#shadow)"/>
+  <text x="1340" y="1098" text-anchor="middle" class="head">证据足够？</text>
+  <text x="1340" y="1123" text-anchor="middle" class="body">是否还有材料与预算？</text>
+
+  <!-- Outcomes and bounded loop -->
+  <path d="M1480 1080H1525V1033H1555" class="edgeGreen"/>
+  <text x="1492" y="1064" class="label">足够</text>
+  <rect x="1558" y="1000" width="205" height="86" class="node local"/>
+  <text x="1660" y="1034" text-anchor="middle" class="head">综合并核验引用</text>
+  <text x="1660" y="1059" text-anchor="middle" class="body">输出结论与适用条件</text>
+  <path d="M1480 1136H1525V1190H1555" class="edge"/>
+  <text x="1487" y="1164" class="note">材料穷尽 / 超预算</text>
+  <rect x="1558" y="1150" width="205" height="86" class="node warning"/>
+  <text x="1660" y="1184" text-anchor="middle" class="head">说明证据不足</text>
+  <text x="1660" y="1209" text-anchor="middle" class="body">报告缺口或冲突，不强答</text>
+  <!-- dashed bounded continuation loops above the evidence row, routed in whitespace -->
+  <path d="M1340 1025V982H453V1052" class="loop"/>
+  <text x="800" y="973" text-anchor="middle" class="label">证据不足但仍有材料与预算：大模型提出下一查找目标，再新增一条证据并重新判断</text>
+
+  <text x="60" y="1285" class="note">设计原则：检索排名用于发现论文，不代表论点成立；每条证据都可追溯；所有循环受文档数、证据数、token 与时间预算约束。</text>
+</svg>

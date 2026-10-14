@@ -1,0 +1,9 @@
+{
+  "jev": {
+    "api": "decisions",
+    "baseUrl": "https://api.defapi.org/api/v1",
+    "apiKey": "",
+    "model": "typesafe/jev-1.13",
+    "threshold": 0.9
+  }
+}

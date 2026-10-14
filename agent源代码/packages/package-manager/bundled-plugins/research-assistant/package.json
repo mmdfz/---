@@ -1,0 +1,28 @@
+{
+  "name": "@agnes/research-assistant",
+  "version": "0.1.0",
+  "description": "Local-first research evidence assistant: paper library indexing, verbatim evidence pool and Jev judging",
+  "type": "module",
+  "license": "Apache-2.0",
+  "exports": "./index.mjs",
+  "files": [
+    "index.mjs",
+    "src",
+    "README.md",
+    "LICENSE"
+  ],
+  "engines": {
+    "node": ">=24.10"
+  },
+  "agnes": {
+    "plugins": [
+      {
+        "export": "researchTools",
+        "id": "ext:research-assistant/tools",
+        "inject": [
+          "extension"
+        ]
+      }
+    ]
+  }
+}

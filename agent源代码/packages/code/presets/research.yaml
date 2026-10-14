@@ -1,0 +1,11 @@
+# The research-literature recipe: standard's tools and approvals, plus the research_* evidence tools
+# and the workflow that drives them. Local papers first, Athenaeum as the fallback, one verbatim
+# excerpt judged at a time, and an answer that cites only the evidence pool.
+name: research
+extends: standard
+model: { prompt_sections: [persona, environment, coding-doctrine, research-workflow] }
+# Judging retries the external judge up to three times at 60 s each, and import/download stop
+# themselves before their own deadline, so these three get more than the 120 s default.
+tools:
+  hidden: []
+  timeouts: { research_add_evidence: 240000, research_download: 300000, research_library_import: 300000 }
